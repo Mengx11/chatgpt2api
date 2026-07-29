@@ -5,7 +5,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": { "version": "latest" },
     "ghcr.io/devcontainers/features/sshd:1": { "version": "latest" }
   },
-  "postCreateCommand": "bash -c 'for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 3; done; cd /workspaces/chatgpt2api && echo \"{}\" > config.json && CHATGPT2API_AUTH_KEY=f0c38d8ec030585b78568babb9a202cad35be3402df018f9 CHATGPT2API_AUTH_KEY=ff4f63f93af9e92722f9f2a0b1bee59668ed0cf80c4522de docker compose up -d; for i in $(seq 1 40); do curl -fsS http://localhost:3000/ >/dev/null 2>&1 && break; sleep 5; done'",
+  "postCreateCommand": "bash -c 'for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 3; done; cd /workspaces/chatgpt2api && echo \"{}\" > config.json && KEY=$(python3 -c \"import secrets;print(secrets.token_hex(24))\") && echo \"$KEY\" > AUTH_KEY.txt && CHATGPT2API_AUTH_KEY=$KEY docker compose up -d; for i in $(seq 1 40); do curl -fsS http://localhost:3000/ >/dev/null 2>&1 && break; sleep 5; done'",
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": { "visibility": "public", "label": "web+api" }
