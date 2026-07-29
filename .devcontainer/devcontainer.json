@@ -5,7 +5,7 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": { "version": "latest" },
     "ghcr.io/devcontainers/features/sshd:1": { "version": "latest" }
   },
-  "postCreateCommand": "bash -c 'for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 3; done; cd /workspaces/chatgpt2api && echo \"{}\" > config.json && KEY=$(python3 -c \"import secrets;print(secrets.token_hex(24))\") && echo \"$KEY\" > AUTH_KEY.txt && CHATGPT2API_AUTH_KEY=$KEY docker compose up -d; for i in $(seq 1 40); do curl -fsS http://localhost:3000/ >/dev/null 2>&1 && break; sleep 5; done'",
+  "postCreateCommand": "bash -c 'for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 3; done; cd /workspaces/chatgpt2api; if [ ! -f AUTH_KEY.txt ]; then python3 -c \"import secrets;open(\\\"AUTH_KEY.txt\\\",\\\"w\\\").write(secrets.token_hex(24))\"; fi; python3 -c \"import json;c=json.load(open(\\\"config.json\\\"));c[\\\"auth-key\\\"]=open(\\\"AUTH_KEY.txt\\\").read().strip();json.dump(c,open(\\\"config.json\\\",\\\"w\\\"),indent=2,ensure_ascii=False)\"; docker compose up -d; for i in $(seq 1 40); do curl -fsS http://localhost:3000/ >/dev/null 2>&1 && break; sleep 5; done'",
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": { "visibility": "public", "label": "web+api" }
